@@ -17,10 +17,11 @@ Todo functionality:
     Picture in Picture : already generated pictures used as elements in another.
 
 Dependencies:
+
       angular.js
 
       angular-route
 
       chance.js
-      
+
       svg.js
