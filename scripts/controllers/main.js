@@ -20,7 +20,6 @@ angular.module('ImageCreator')
     };
 
     function first () {
-
       $scope.draw.rect($scope.size.width, $scope.size.height).fill('#000')
       for(var p in $scope.points) {
         var colors = $scope.color.name.split(',');
@@ -108,7 +107,7 @@ angular.module('ImageCreator')
       var a = $scope.angle;
       var id;
       if($scope.shape.id == 'M')
-        {id = $scope.form0.shapeList[Math.floor(Math.random()*($scope.form0.shapeList.length-1))].id;}
+        {id = $scope.shapeList[Math.floor(Math.random()*($scope.shapeList.length-1))].id;}
       else
         {id = $scope.shape.id;}
       switch(id) {
