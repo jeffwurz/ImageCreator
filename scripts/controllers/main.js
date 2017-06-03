@@ -26,10 +26,7 @@ angular.module('ImageCreator')
         var radii  = $scope.radius.name.split(',');
         var c = colors[getRandomArbitrary(0, colors.length)];
         var r = radii[getRandomArbitrary(0, radii.length)];
-        switch($scope.shape.id) {
-          case 'T':  $scope.angle +=180; break;
-          default: $scope.angle += 180;
-        }
+        changeAngle();
         makeShape($scope.points[p].x, $scope.points[p].y, c, r);
       }
     };
@@ -39,10 +36,7 @@ angular.module('ImageCreator')
       for(var p in $scope.points) {
         var colors = $scope.color.name.split(',');
         var radii  = $scope.radius.name.split(',');
-        switch($scope.shape.id) {
-          case 'T':  $scope.angle +=180; break;
-          default: $scope.angle += 180;
-        }
+        changeAngle();
         radii.reverse().forEach(function (r){
           var c = colors[getRandomArbitrary(0, colors.length)];
           makeShape($scope.points[p].x, $scope.points[p].y, c, r);
@@ -56,10 +50,7 @@ angular.module('ImageCreator')
         var colors = $scope.color.name.split(',');
         var radii  = $scope.radius.name.split(',');
         var mx = 0, my = 0;
-        switch($scope.shape.id) {
-          case 'T':  $scope.angle +=180; break;
-          default: $scope.angle += 180;
-        }
+        changeAngle();
         radii.reverse().forEach(function (r){
           var c = colors[getRandomArbitrary(0, colors.length)];
           makeShape($scope.points[p].x, $scope.points[p].y, c, r);
@@ -71,6 +62,7 @@ angular.module('ImageCreator')
       var p = $scope.pitch.name.split(',');
       var xp = p[getRandomArbitrary(0, p.length)];
       var yp = p[getRandomArbitrary(0, p.length)];
+      console.log("Point List");
       for(var x = Math.min.apply(null, p); x <= ($scope.size.width - Math.min.apply(null, p)); x = +x + +xp){
         xp = p[getRandomArbitrary(0, p.length)];
         for(var y = Math.min.apply(null, p); y <= ($scope.size.height - Math.min.apply(null, p)); y = +y + +yp){
@@ -84,15 +76,16 @@ angular.module('ImageCreator')
       var r = $scope.radius.name.split(',');
       var radius = Math.max.apply(null, r);
       var mx = 0, my = 0;
+      console.log("Fill List");
       switch($scope.shape.id) {
         case 'C':  mx=1; my=1; break;
         case 'T':  if(m == 'c'){mx=1; my=1;}else{mx=0.5; my=1;}break;
         case 'R':  mx=.618; my=1; break;
-        case 'L':  mx=.103; my=1; break;
-        case 'E':  mx=1; my=4; break;
-        case 'O':  mx=1; my=1; break;
-        case 'M':  mx=1; my=3; break;
-        default :  mx=2; my=2;
+        case 'L':  mx=1;    my=1; break;
+        case 'E':  mx=1;    my=2; break;
+        case 'O':  mx=1;    my=1; break;
+        case 'M':  mx=.333; my=1; break;
+        default :  mx=1;    my=1;
       }
       for(var x = 0; x < $scope.size.width + mx*radius; x = +x + mx * radius){
         for(var y = 0; y < $scope.size.height + my*radius; y = +y + my * radius){
@@ -120,11 +113,11 @@ angular.module('ImageCreator')
         case 'R':
           $scope.draw.rect(.618*r, r).cx(x).cy(y).fill(c); break;
         case 'L':
-          $scope.draw.line(x, y-1*r, x, y+1*r).
-          stroke({ width: .103*r , color: c}).transform({rotation: a, relative: true});
+          $scope.draw.line(x, y-4.854*r, x, y+4.854*r).
+          stroke({ width: r , color: c}).transform({rotation: a, relative: true});
           break;
         case 'E':
-          $scope.draw.ellipse().attr({cx: x, cy:y, rx: .5*r, ry: 2*r}).fill(c); break;
+          $scope.draw.ellipse().attr({cx: x, cy:y, rx: .5*r, ry: r}).fill(c); break;
         case 'O':
           poly = [[x+.5*r,y+.167*r], [x+.5*r,y-.167*r], [x+.167*r,y-.5*r], [x-.167*r,y-.5*r],
                   [x-.5*r,y-.167*r], [x-.5*r,y+.167*r], [x-.167*r,y+.5*r], [x+.167*r,y+.5*r]];
@@ -151,6 +144,14 @@ angular.module('ImageCreator')
       $scope.prev_shape = $scope.shape.id;
       $scope.prev_radius = $scope.radius.id;
       $scope.prev_pitch = $scope.pitch.id;
+    }
+
+    function changeAngle(){
+      switch($scope.shape.id) {
+        case 'T':  $scope.angle +=180; break;
+        case 'L':  $scope.angle += 30; break;
+        default: $scope.angle += 180;
+      }
     }
 
     function getRandomArbitrary(min, max) {
