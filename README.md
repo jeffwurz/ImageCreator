@@ -18,6 +18,9 @@ Todo functionality:
 
 Dependencies:
       angular.js
+
       angular-route
+
       chance.js
+      
       svg.js
