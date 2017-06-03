@@ -4,39 +4,46 @@ angular.module('ImageCreator')
     $scope.points = [];
     $scope.prev_mode = 0;
     $scope.prev_shape = 0;
+    $scope.prev_radius = 0;
+    $scope.prev_pitch = 0;
     $scope.angle = 0;
     $scope.size = {'width': 750, 'height': 750}
     $scope.draw = SVG('drawing').size($scope.size.width, $scope.size.height).fill('#FFF')
     $scope.generateImage = function() {
+      regenerateList();
       switch($scope.mode.id){
         case 'c' : concentric(); break;
         case 'f' : first(); break;
         case 'ff': fillFrame(); break;
       }
-      $scope.prev_mode = $scope.mode.id;
-      $scope.prev_shape = $scope.shape.id;
+      savePrevious();
     };
 
     function first () {
-      if($scope.mode.id != $scope.prev_mode && $scope.shape.id != $scope.prev_shape){$scope.points = []; generatePointList();}
+
       $scope.draw.rect($scope.size.width, $scope.size.height).fill('#000')
       for(var p in $scope.points) {
-        console.log("P = " + p);
         var colors = $scope.color.name.split(',');
         var radii  = $scope.radius.name.split(',');
         var c = colors[getRandomArbitrary(0, colors.length)];
         var r = radii[getRandomArbitrary(0, radii.length)];
+        switch($scope.shape.id) {
+          case 'T':  $scope.angle +=180; break;
+          default: $scope.angle += 180;
+        }
         makeShape($scope.points[p].x, $scope.points[p].y, c, r);
       }
     };
 
     function concentric () {
-      if($scope.mode.id != $scope.prev_mode && $scope.shape.id != $scope.prev_shape){$scope.points = []; generateFillList();}
       $scope.draw.rect($scope.size.width, $scope.size.height).fill('#000')
       for(var p in $scope.points) {
-        console.log("P = " + p);
         var colors = $scope.color.name.split(',');
         var radii  = $scope.radius.name.split(',');
+        switch($scope.shape.id) {
+          case 'T':  $scope.angle +=180; break;
+          default: $scope.angle += 180;
+        }
         radii.reverse().forEach(function (r){
           var c = colors[getRandomArbitrary(0, colors.length)];
           makeShape($scope.points[p].x, $scope.points[p].y, c, r);
@@ -45,10 +52,8 @@ angular.module('ImageCreator')
     };
 
     function fillFrame () {
-      if($scope.mode.id != $scope.prev_mode && $scope.shape.id != $scope.prev_shape){$scope.points = [];generateFillList();}
       $scope.draw.rect($scope.size.width, $scope.size.height).fill('#000')
       for(var p in $scope.points) {
-        console.log("P = " + p);
         var colors = $scope.color.name.split(',');
         var radii  = $scope.radius.name.split(',');
         var mx = 0, my = 0;
@@ -88,55 +93,77 @@ angular.module('ImageCreator')
         case 'E':  mx=1; my=4; break;
         case 'O':  mx=1; my=1; break;
         case 'M':  mx=1; my=3; break;
-        default: mx=2; my=2;
+        default :  mx=2; my=2;
       }
       for(var x = 0; x < $scope.size.width + mx*radius; x = +x + mx * radius){
         for(var y = 0; y < $scope.size.height + my*radius; y = +y + my * radius){
           $scope.points.push({x: x, y: y});
-          console.log(x, y);
         }
       }
     }
 
     function makeShape (x, y, c, r) {
-      var poly;
       if($scope.angle >= 360){$scope.angle -= 360;}
+      var poly;
       var a = $scope.angle;
       var id;
-      if($scope.shape.id == 'M'){id = $scope.form0.shapeList[Math.floor(Math.random()*($scope.form0.shapeList.length-1))].id;}
-      else{id = $scope.shape.id;}
+      if($scope.shape.id == 'M')
+        {id = $scope.form0.shapeList[Math.floor(Math.random()*($scope.form0.shapeList.length-1))].id;}
+      else
+        {id = $scope.shape.id;}
       switch(id) {
-        case 'C':  $scope.draw.circle(r).cx(x).cy(y).fill(c); break;
+        case 'C':
+          $scope.draw.circle(r).cx(x).cy(y).fill(c); break;
         case 'T':
           if(a==0)       {poly = [[x+.5*r,y+.5*r], [x,y-.5*r], [x-.5*r,y+.5*r]];}
           else if(a==180){poly = [[x-.5*r,y-.5*r], [x,y+.5*r], [x+.5*r,y-.5*r]];}
           $scope.draw.polygon(poly).fill(c); break;
-        case 'R':  $scope.draw.rect(.618*r, r).cx(x).cy(y).fill(c); break;
+        case 'R':
+          $scope.draw.rect(.618*r, r).cx(x).cy(y).fill(c); break;
         case 'L':
           $scope.draw.line(x, y-1*r, x, y+1*r).
           stroke({ width: .103*r , color: c}).transform({rotation: a, relative: true});
           break;
-        case 'E':  $scope.draw.ellipse().attr({cx: x, cy:y, rx: .5*r, ry: 2*r}).fill(c); break;
+        case 'E':
+          $scope.draw.ellipse().attr({cx: x, cy:y, rx: .5*r, ry: 2*r}).fill(c); break;
         case 'O':
           poly = [[x+.5*r,y+.167*r], [x+.5*r,y-.167*r], [x+.167*r,y-.5*r], [x-.167*r,y-.5*r],
                   [x-.5*r,y-.167*r], [x-.5*r,y+.167*r], [x-.167*r,y+.5*r], [x+.167*r,y+.5*r]];
           $scope.draw.polygon(poly).fill(c); break;
-        default: mx=2; my=2;
       }
     };
+
+    function regenerateList(){
+      if($scope.mode.id != $scope.prev_mode ||
+         $scope.shape.id != $scope.prev_shape ||
+         $scope.radius.id != $scope.prev_radius ||
+         $scope.pitch.id != $scope.prev_pitch)
+        { $scope.points = [];
+          switch($scope.mode.id){
+            case 'c' : generateFillList(); break;
+            case 'f' : generatePointList();break;
+            case 'ff': generateFillList(); break;
+          }
+        }
+    }
+
+    function savePrevious(){
+      $scope.prev_mode = $scope.mode.id;
+      $scope.prev_shape = $scope.shape.id;
+      $scope.prev_radius = $scope.radius.id;
+      $scope.prev_pitch = $scope.pitch.id;
+    }
 
     function getRandomArbitrary(min, max) {
       return Math.floor(Math.random() * (max - min)) + min;
     }
-    $scope.form = {
-      'modeList': [
+
+    $scope.modeList = [
         { name: 'First', id: 'f'},
         { name: 'Concentric', id: 'c'},
         { name: 'Fill Frame', id: 'ff'}
-      ]
-    };
-    $scope.form0 = {
-      'shapeList': [
+      ];
+    $scope.shapeList = [
         { name: 'Circle', id: 'C'},
         { name: 'Triangle', id: 'T'},
         { name: 'Rectangle', id: 'R'},
@@ -144,10 +171,8 @@ angular.module('ImageCreator')
         { name: 'Ellipse', id: 'E'},
         { name: 'Octagon', id: 'O'},
         { name: 'Random', id: 'M'}
-      ]
-    };
-    $scope.form1  = {
-      'colorList': [
+      ];
+    $scope.colorList = [
         { name: '#FFFF66, #FFCC00, #FF9900, #FF0000', id: '1'},
         { name: '#E8D0A9, #B7AFA3, #C1DAD6, #F5FAFA, #ACD1E9, #6D929B', id: '2'},
         { name: '#999967, #666666, #CCCCCC, #CCCC9A', id: '3'},
@@ -195,10 +220,8 @@ angular.module('ImageCreator')
         { name: '#054950, #789A9F, #EDF4F5, #FFFFFF, #F78F1E', id: '45'},
         { name: '#FF8F00, #5A8F29, #3C7DC4, #2B2B2B', id: '46'},
         { name: '#0A4958, #01B6AD, #F6E7D2, #FFFFFF', id: '47'}
-      ]
-    };
-    $scope.form2  = {
-      'pitchList': [
+      ];
+    $scope.pitchList  = [
         { name: '32,42,46,54,60,64,70', id: '1'},
         { name: '20,22,24,28,30,34,44,54', id: '2'},
         { name: '20,22,28,30,32,65', id: '3'},
@@ -206,10 +229,8 @@ angular.module('ImageCreator')
         { name: '10,15,25,37,40', id: '5'},
         { name: '15,19,26,39', id: '6'},
         { name: '20,28,32,36', id: '7'}
-      ]
-    };
-    $scope.form3  = {
-      'radiusList': [
+      ];
+    $scope.radiusList  = [
         { name: '1,1,2,3,4,5,8,13,21,34', id: '1'},
         { name: '1,2,4,8,21,34', id: '2'},
         { name: '4,5,6,7,10,11,13,14,15', id: '3'},
@@ -221,6 +242,5 @@ angular.module('ImageCreator')
         { name: '7,11,15,20', id: '9'},
         { name: '5,8,13,21', id: '10'},
         { name: '5,6,7,8,9', id: '11'}
-      ]
-    };
+      ];
   });

@@ -6,32 +6,32 @@
       <div class="form-group col-md-6">
        <div class="mode">
        <label>Mode :          </label><select ng-model="mode"
-          ng-init="mode = form.modeList[1]"
-          ng-options="mode.name for mode in form.modeList"></select>
+          ng-init="mode = modeList[0]"
+          ng-options="mode.name for mode in modeList"></select>
        </div>
        <br>
        <div class="shape">
        <label>Shape :         </label><select ng-model="shape"
-          ng-init="shape = form0.shapeList[2]"
-          ng-options="shape.name for shape in form0.shapeList"></select>
+          ng-init="shape = shapeList[0]"
+          ng-options="shape.name for shape in shapeList"></select>
        </div>
        <br>
        <div class="color">
        <label>Color List :    </label><select ng-model="color"
-          ng-init="color = form1.colorList[0]"
-          ng-options="color.name for color in form1.colorList"></select>
+          ng-init="color = colorList[0]"
+          ng-options="color.name for color in colorList"></select>
        </div>
        <br>
        <div  class="radius">
        <label>Radius List :   </label><select ng-model="radius"
-          ng-init="radius = form3.radiusList[0]"
-          ng-options="radius.name for radius in form3.radiusList"></select>
+          ng-init="radius = radiusList[0]"
+          ng-options="radius.name for radius in radiusList"></select>
         </div>
         <br>
         <div class="pitch">
           <label>Pitch List : </label><select ng-model="pitch"
-            ng-init="pitch = form2.pitchList[0]"
-            ng-options="pitch.name for pitch in form2.pitchList"></select>
+            ng-init="pitch = pitchList[0]"
+            ng-options="pitch.name for pitch in pitchList"></select>
         </div>
        <br>
       <div class="form-group col-md-6">
