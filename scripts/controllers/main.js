@@ -6,7 +6,7 @@ angular.module('ImageCreator')
     $scope.prev_shape = 0;
     $scope.prev_radius = 0;
     $scope.prev_pitch = 0;
-    $scope.angle = 0;
+    $scope.angle = 45;
     $scope.size = {'width': 750, 'height': 750}
     $scope.draw = SVG('drawing').size($scope.size.width, $scope.size.height).fill('#FFF')
     $scope.generateImage = function() {
@@ -14,6 +14,11 @@ angular.module('ImageCreator')
       switch($scope.mode.id){
         case 'c' : concentric(); break;
         case 'f' : first(); break;
+        case 's' : second(); break;
+        case 't' : third(); break;
+        case 'fo' : fourth(); break;
+        case 'fi' : fifth(); break;
+        case 'si' : sixth(); break;
         case 'ff': fillFrame(); break;
       }
       savePrevious();
@@ -26,7 +31,65 @@ angular.module('ImageCreator')
         var radii  = $scope.radius.name.split(',');
         var c = colors[getRandomArbitrary(0, colors.length)];
         var r = radii[getRandomArbitrary(0, radii.length)];
-        changeAngle();
+        makeShape($scope.points[p].x, $scope.points[p].y, c, r);
+      }
+    };
+
+    function second () {
+      $scope.draw.rect($scope.size.width, $scope.size.height).fill('#000')
+      for(var p in $scope.points) {
+        var colors = $scope.color.name.split(',');
+        var radii  = $scope.radius.name.split(',');
+        var c = colors[getRandomArbitrary(0, colors.length)];
+        var r = radii[getRandomArbitrary(0, radii.length)];
+        makeShape($scope.points[p].x, $scope.points[p].y, c, r);
+      }
+    };
+
+    function third () {
+      $scope.draw.rect($scope.size.width, $scope.size.height).fill('#000')
+      for(var p in $scope.points) {
+        var colors = $scope.color.name.split(',');
+        var radii  = $scope.radius.name.split(',');
+        var c = colors[getRandomArbitrary(0, colors.length)];
+        var r = radii[getRandomArbitrary(0, radii.length)];
+        if(p % 5 == 0){changeAngle();}
+        makeShape($scope.points[p].x, $scope.points[p].y, c, r);
+      }
+    };
+
+    function fourth () {
+      $scope.draw.rect($scope.size.width, $scope.size.height).fill('#000')
+      for(var p in $scope.points) {
+        var colors = $scope.color.name.split(',');
+        var radii  = $scope.radius.name.split(',');
+        var c = colors[getRandomArbitrary(0, colors.length)];
+        var r = radii[getRandomArbitrary(0, radii.length)];
+        if(p % 2 == 0 || p % 4 == 0 ){changeAngle();}
+        makeShape($scope.points[p].x, $scope.points[p].y, c, r);
+      }
+    };
+
+    function fifth () {
+      $scope.draw.rect($scope.size.width, $scope.size.height).fill('#000')
+      for(var p in $scope.points) {
+        var colors = $scope.color.name.split(',');
+        var radii  = $scope.radius.name.split(',');
+        var c = colors[getRandomArbitrary(0, colors.length)];
+        var r = radii[getRandomArbitrary(0, radii.length)];
+        if(p % 5 == 0 || p % 5 == 0){changeAngle();}
+        makeShape($scope.points[p].x, $scope.points[p].y, c, r);
+      }
+    };
+
+    function sixth () {
+      $scope.draw.rect($scope.size.width, $scope.size.height).fill('#000')
+      for(var p in $scope.points) {
+        var colors = $scope.color.name.split(',');
+        var radii  = $scope.radius.name.split(',');
+        var c = colors[getRandomArbitrary(0, colors.length)];
+        var r = radii[getRandomArbitrary(0, radii.length)];
+        if(p % 3 == 0 || p % 6 == 0 || p % 9 == 0){changeAngle();}
         makeShape($scope.points[p].x, $scope.points[p].y, c, r);
       }
     };
@@ -62,7 +125,6 @@ angular.module('ImageCreator')
       var p = $scope.pitch.name.split(',');
       var xp = p[getRandomArbitrary(0, p.length)];
       var yp = p[getRandomArbitrary(0, p.length)];
-      console.log("Point List");
       for(var x = Math.min.apply(null, p); x <= ($scope.size.width - Math.min.apply(null, p)); x = +x + +xp){
         xp = p[getRandomArbitrary(0, p.length)];
         for(var y = Math.min.apply(null, p); y <= ($scope.size.height - Math.min.apply(null, p)); y = +y + +yp){
@@ -76,7 +138,6 @@ angular.module('ImageCreator')
       var r = $scope.radius.name.split(',');
       var radius = Math.max.apply(null, r);
       var mx = 0, my = 0;
-      console.log("Fill List");
       switch($scope.shape.id) {
         case 'C':  mx=1; my=1; break;
         case 'T':  if(m == 'c'){mx=1; my=1;}else{mx=0.5; my=1;}break;
@@ -105,23 +166,23 @@ angular.module('ImageCreator')
         {id = $scope.shape.id;}
       switch(id) {
         case 'C':
-          $scope.draw.circle(r).cx(x).cy(y).fill(c); break;
+          $scope.draw.circle(r).cx(x).cy(y).fill(c).transform({rotation: a, relative: false}); break;
         case 'T':
           if(a==0)       {poly = [[x+.5*r,y+.5*r], [x,y-.5*r], [x-.5*r,y+.5*r]];}
           else if(a==180){poly = [[x-.5*r,y-.5*r], [x,y+.5*r], [x+.5*r,y-.5*r]];}
-          $scope.draw.polygon(poly).fill(c); break;
+          $scope.draw.polygon(poly).fill(c).transform({rotation: a, relative: true}); break;
         case 'R':
-          $scope.draw.rect(.618*r, r).cx(x).cy(y).fill(c); break;
+          $scope.draw.rect(.618*r, r).cx(x).cy(y).fill(c).transform({rotation: a, relative: true}); break;
         case 'L':
-          $scope.draw.line(x, y-4.854*r, x, y+4.854*r).
-          stroke({ width: r , color: c}).transform({rotation: a, relative: true});
+          $scope.draw.line(x, y-2.427*r, x, y+2.42*r).
+          stroke({ width: r/2 , color: c}).transform({rotation: a, relative: true});
           break;
         case 'E':
-          $scope.draw.ellipse().attr({cx: x, cy:y, rx: .5*r, ry: r}).fill(c); break;
+          $scope.draw.ellipse().attr({cx: x, cy:y, rx: .5*r, ry: r}).fill(c).transform({rotation: a, relative: false}); break;
         case 'O':
           poly = [[x+.5*r,y+.167*r], [x+.5*r,y-.167*r], [x+.167*r,y-.5*r], [x-.167*r,y-.5*r],
                   [x-.5*r,y-.167*r], [x-.5*r,y+.167*r], [x-.167*r,y+.5*r], [x+.167*r,y+.5*r]];
-          $scope.draw.polygon(poly).fill(c); break;
+          $scope.draw.polygon(poly).fill(c).transform({rotation: a, relative: true}); break;
       }
     };
 
@@ -132,9 +193,14 @@ angular.module('ImageCreator')
          $scope.pitch.id != $scope.prev_pitch)
         { $scope.points = [];
           switch($scope.mode.id){
-            case 'c' : generateFillList(); break;
-            case 'f' : generatePointList();break;
-            case 'ff': generateFillList(); break;
+            case 'c' : generateFillList();  break;
+            case 'ff': generateFillList();  break;
+            case 'f' : generatePointList(); break;
+            case 's' : generatePointList(); break;
+            case 't' : generatePointList(); break;
+            case 'fo': generatePointList(); break;
+            case 'fi': generatePointList(); break;
+            case 'si': generatePointList(); break;
           }
         }
     }
@@ -148,8 +214,13 @@ angular.module('ImageCreator')
 
     function changeAngle(){
       switch($scope.shape.id) {
+        case 'C':  $scope.angle +=60; break;
         case 'T':  $scope.angle +=180; break;
+        case 'R':  $scope.angle +=180; break;
         case 'L':  $scope.angle += 30; break;
+        case 'E':  $scope.angle += 60; break;
+        case 'O':  $scope.angle += 60; break;
+        case 'M':  $scope.angle +=180; break;
         default: $scope.angle += 180;
       }
     }
@@ -160,6 +231,11 @@ angular.module('ImageCreator')
 
     $scope.modeList = [
         { name: 'First', id: 'f'},
+        { name: 'Second', id: 's'},
+        { name: 'Third', id: 't'},
+        { name: 'Fourth', id: 'fo'},
+        { name: 'Fifth', id: 'fi'},
+        { name: 'Six', id: 'si'},
         { name: 'Concentric', id: 'c'},
         { name: 'Fill Frame', id: 'ff'}
       ];
@@ -228,7 +304,8 @@ angular.module('ImageCreator')
         { name: '20,30,32,40,60', id: '4'},
         { name: '10,15,25,37,40', id: '5'},
         { name: '15,19,26,39', id: '6'},
-        { name: '20,28,32,36', id: '7'}
+        { name: '1,2,3,4,5', id: '7'},
+        { name: '20,28,32,36', id: '8'}
       ];
     $scope.radiusList  = [
         { name: '1,1,2,3,4,5,8,13,21,34', id: '1'},
@@ -241,6 +318,7 @@ angular.module('ImageCreator')
         { name: '5,8,13,21,34', id: '8'},
         { name: '7,11,15,20', id: '9'},
         { name: '5,8,13,21', id: '10'},
-        { name: '5,6,7,8,9', id: '11'}
+        { name: '5,6,7,8,9', id: '11'},
+        { name: '1,2,3,4,5', id: '12'}
       ];
   });
