@@ -1,40 +1,15 @@
-<div class="ng-cloak">
+<div class="ng-cloak" style="height:370px;width:600px;">
   <form class="form-horizontal">
     <fieldset>
       <!-- ImageCreator -->
       <legend>Updated on the fly in an SVG graphic via AngularJS.</legend>
       <div class="form-group col-md-6">
-       <div class="mode">
-       <label>Mode :          </label><select ng-model="mode"
-          ng-init="mode = modeList[2]"
-          ng-options="mode.name for mode in modeList"></select>
-       </div>
-       <br>
-       <div class="shape">
-       <label>Shape :         </label><select ng-model="shape"
-          ng-init="shape = shapeList[3]"
-          ng-options="shape.name for shape in shapeList"></select>
-       </div>
-       <br>
-       <div class="color">
-       <label>Color List :    </label><select ng-model="color"
-          ng-init="color = colorList[0]"
-          ng-options="color.name for color in colorList"></select>
-       </div>
-       <br>
-       <div  class="radius">
-       <label>Radius List :   </label><select ng-model="radius"
-          ng-init="radius = radiusList[0]"
-          ng-options="radius.name for radius in radiusList"></select>
-        </div>
-        <br>
-        <div class="pitch">
-          <label>Pitch List : </label><select ng-model="pitch"
-            ng-init="pitch = pitchList[0]"
-            ng-options="pitch.name for pitch in pitchList"></select>
-        </div>
-       <br>
-      <div class="form-group col-md-6">
+        <div id="color"></div>
+        <div id="mode"></div>
+        <div id="initrot"></div>
+        <div id="shape"></div>
+        <div id="radius"></div>
+        <div id="pitch"></div>
         <br>
           <button ng-click="generateImage()">Generate</button>
         </div>
