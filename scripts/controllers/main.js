@@ -23,7 +23,19 @@ angular.module('ImageCreator')
         case '8' : fillFrame(); break;
       }
       savePrevious();
+      load();
     };
+
+    function load (){
+      console.log($scope.draw);
+      $scope.svg = new Blob([$scope.draw.svg()], {type: 'image/svg+xml'});
+      $scope.url = $scope.DOMURL.createObjectURL($scope.svg);
+      $scope.img.onload = function() {
+        $scope.ctx.drawImage($scope.img, 0, 0);
+        $scope.DOMURL.revokeObjectURL($scope.url);
+      }
+      $scope.img.src = $scope.url;
+    }
 
     function first () {
       console.log("first");
@@ -342,6 +354,10 @@ angular.module('ImageCreator')
         $scope.color = "#0A4958,#01B6AD,#F6E7D2,#FFFFFF";
         $scope.size = {'width': 750, 'height': 750};
         $scope.draw = SVG('drawing').size($scope.size.width, $scope.size.height).fill('#FFF');
+        $scope.canvas = document.getElementById('canvas');
+        $scope.ctx = $scope.canvas.getContext('2d');
+        $scope.DOMURL = window.URL || window.webkitURL || window;
+        $scope.img = new Image();
     }
       $('#mode').ddslick({
         data:$scope.modeList,
